@@ -1,5 +1,6 @@
 package com.nelkinda.training;
 
+import java.io.PrintStream;
 import java.util.Date;
 import java.util.List;
 
@@ -8,24 +9,54 @@ enum ExpenseType {
 }
 
 class Expense {
-    ExpenseType type;
-    int amount;
+    private ExpenseType type;
+    private int amount;
+
+    Expense(ExpenseType type, int amount) {
+        this.type = type;
+        this.amount = amount;
+        validate();
+    }
+
+    public ExpenseType getType() {
+        return type;
+    }
+
+    public int getAmount() {
+        return amount;
+    }
+
+    private void validate() {
+        if (type == null) {
+            throw new IllegalArgumentException("type is null");
+        }
+        if (amount <= 0) {
+            throw new IllegalArgumentException("amount must be greater than zero");
+        }
+    }
 }
 
 public class ExpenseReport {
+
+    private final PrintStream output;
+
+    private ExpenseReport(PrintStream output) {
+        this.output = output;
+    }
+
     public void printReport(List<Expense> expenses) {
         int total = 0;
         int mealExpenses = 0;
 
-        System.out.println("Expenses " + new Date());
+        output.println("Expenses " + new Date());
 
         for (Expense expense : expenses) {
-            if (expense.type == ExpenseType.DINNER || expense.type == ExpenseType.BREAKFAST) {
-                mealExpenses += expense.amount;
+            if (expense.getType() == ExpenseType.DINNER || expense.getType() == ExpenseType.BREAKFAST) {
+                mealExpenses += expense.getAmount();
             }
 
             String expenseName = "";
-            switch (expense.type) {
+            switch (expense.getType()) {
             case DINNER:
                 expenseName = "Dinner";
                 break;
@@ -37,14 +68,14 @@ public class ExpenseReport {
                 break;
             }
 
-            String mealOverExpensesMarker = expense.type == ExpenseType.DINNER && expense.amount > 5000 || expense.type == ExpenseType.BREAKFAST && expense.amount > 1000 ? "X" : " ";
+            String mealOverExpensesMarker = expense.getType() == ExpenseType.DINNER && expense.getAmount() > 5000 || expense.getType() == ExpenseType.BREAKFAST && expense.getAmount() > 1000 ? "X" : " ";
 
-            System.out.println(expenseName + "\t" + expense.amount + "\t" + mealOverExpensesMarker);
+            output.println(expenseName + "\t" + expense.getAmount() + "\t" + mealOverExpensesMarker);
 
-            total += expense.amount;
+            total += expense.getAmount();
         }
 
-        System.out.println("Meal expenses: " + mealExpenses);
-        System.out.println("Total expenses: " + total);
+        output.println("Meal expenses: " + mealExpenses);
+        output.println("Total expenses: " + total);
     }
 }
