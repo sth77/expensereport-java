@@ -80,4 +80,37 @@ class ExpenseReportTest {
         verifyNoMoreInteractions(output);
     }
 
+    @Test
+    void printReport_lunchOverLimit_markedWithAnX() {
+        // arrange
+        List<Expense> expenses = List.of(
+                new Expense(ExpenseType.LUNCH, 2001));
+
+        // act
+        expenseReport.printReport(expenses);
+
+        // assert
+        verify(output).println(startsWith("Expenses "));
+        verify(output).println(eq("Lunch\t2001\tX"));
+        verify(output).println(eq("Meal expenses: 2001"));
+        verify(output).println(eq("Total expenses: 2001"));
+        verifyNoMoreInteractions(output);
+    }
+
+    @Test
+    void printReport_lunchBelowLimit_printedWithoutAnX() {
+        // arrange
+        List<Expense> expenses = List.of(
+                new Expense(ExpenseType.LUNCH, 2000));
+
+        // act
+        expenseReport.printReport(expenses);
+
+        // assert
+        verify(output).println(startsWith("Expenses "));
+        verify(output).println(eq("Lunch\t2000\t "));
+        verify(output).println(eq("Meal expenses: 2000"));
+        verify(output).println(eq("Total expenses: 2000"));
+        verifyNoMoreInteractions(output);
+    }
 }
