@@ -40,7 +40,7 @@ public class ExpenseReport {
 
     private final PrintStream output;
 
-    private ExpenseReport(PrintStream output) {
+    ExpenseReport(PrintStream output) {
         this.output = output;
     }
 
