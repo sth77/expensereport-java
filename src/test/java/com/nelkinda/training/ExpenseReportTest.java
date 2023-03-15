@@ -1,5 +1,6 @@
 package com.nelkinda.training;
 
+import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,9 +28,9 @@ class ExpenseReportTest {
     void printReport_regularExpensesGiven_printed() {
         // arrange
         List<Expense> expenses = List.of(
-                new Expense(ExpenseType.DINNER, 15),
-                new Expense(ExpenseType.BREAKFAST, 5),
-                new Expense(ExpenseType.CAR_RENTAL, 115));
+                dinner(15),
+                breakfast(5),
+                carRental(115));
 
         // act
         expenseReport.printReport(expenses);
@@ -60,12 +61,12 @@ class ExpenseReportTest {
     }
 
     @Test
-    void printReport_mealOverExpenses_markedWithAnX() {
+    void printReport_mealOverLimit_markedWithAnX() {
         // arrange
         List<Expense> expenses = List.of(
-                new Expense(ExpenseType.DINNER, 5001),
-                new Expense(ExpenseType.BREAKFAST, 1001),
-                new Expense(ExpenseType.CAR_RENTAL, 115));
+                dinner(5001),
+                breakfast(1001),
+                carRental(115));
 
         // act
         expenseReport.printReport(expenses);
@@ -83,8 +84,7 @@ class ExpenseReportTest {
     @Test
     void printReport_lunchOverLimit_markedWithAnX() {
         // arrange
-        List<Expense> expenses = List.of(
-                new Expense(ExpenseType.LUNCH, 2001));
+        val expenses = List.of(lunch(2000));
 
         // act
         expenseReport.printReport(expenses);
@@ -100,8 +100,7 @@ class ExpenseReportTest {
     @Test
     void printReport_lunchBelowLimit_printedWithoutAnX() {
         // arrange
-        List<Expense> expenses = List.of(
-                new Expense(ExpenseType.LUNCH, 2000));
+        List<Expense> expenses = List.of(lunch(2000));
 
         // act
         expenseReport.printReport(expenses);
@@ -113,4 +112,21 @@ class ExpenseReportTest {
         verify(output).println(eq("Total expenses: 2000"));
         verifyNoMoreInteractions(output);
     }
+
+    private Expense breakfast(int amount) {
+        return new Expense(ExpenseType.BREAKFAST, amount);
+    }
+
+    private Expense lunch(int amount) {
+        return new Expense(ExpenseType.LUNCH, amount);
+    }
+
+    private Expense dinner(int amount) {
+        return new Expense(ExpenseType.DINNER, amount);
+    }
+
+    private Expense carRental(int amount) {
+        return new Expense(ExpenseType.CAR_RENTAL, amount);
+    }
+
 }

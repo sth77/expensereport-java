@@ -1,73 +1,47 @@
 package com.nelkinda.training;
 
+import lombok.*;
+
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@Getter
+@RequiredArgsConstructor
 enum ExpenseType {
     BREAKFAST("Breakfast", 1000, true),
     LUNCH("Lunch", 2000, true),
     DINNER("Dinner", 5000, true),
     CAR_RENTAL("Car Rental", 0, false);
 
-    ExpenseType(String label, int limit, boolean meal) {
-        this.label = label;
-        this.limit = limit;
-        this.meal = meal;
-    }
-
-    String label;
-    int limit;
-    boolean meal;
-
-    boolean isMeal() {
-        return meal;
-    }
+    final String label;
+    final int limit;
+    final boolean meal;
 }
 
+@Value
 class Expense {
-    private ExpenseType type;
-    private int amount;
-
-    Expense(ExpenseType type, int amount) {
-        this.type = type;
-        this.amount = amount;
-        validate();
-    }
-
-    ExpenseType getType() {
-        return type;
-    }
-
-    int getAmount() {
-        return amount;
-    }
+    ExpenseType type;
+    int amount;
 
     boolean exeedsLimit() {
         return type.limit > 0 && amount > type.limit;
-    }
-
-    private void validate() {
-        if (type == null) {
-            throw new IllegalArgumentException("type is null");
-        }
-        if (amount <= 0) {
-            throw new IllegalArgumentException("amount must be greater than zero");
-        }
     }
 }
 
 record ExpenseVM(String name, int amount, boolean mark) {
 }
 
+@Getter
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 class ReportVM {
     private List<ExpenseVM> expenses = new ArrayList<>();
     private int total = 0;
     private int mealExpenses = 0;
 
     static ReportVM of(List<Expense> expenses) {
-        ReportVM result = new ReportVM();
+        val result = new ReportVM();
         expenses.forEach(result::add);
         return result;
     }
@@ -82,31 +56,15 @@ class ReportVM {
             mealExpenses += expense.getAmount();
         }
     }
-
-    public int getMealExpenses() {
-        return mealExpenses;
-    }
-
-    public int getTotal() {
-        return total;
-    }
-
-    public List<ExpenseVM> getExpenses() {
-        return expenses;
-    }
-
 }
 
+@RequiredArgsConstructor
 class ReportPrinter {
 
-    private final String MARK = "X";
-    private final String NO_MARK = " ";
+    private static final String MARK = "X";
+    private static final String NO_MARK = " ";
 
     private final PrintStream output;
-
-    ReportPrinter(PrintStream output) {
-        this.output = output;
-    }
 
     public void print(ReportVM report) {
         output.println("Expenses " + new Date());
@@ -132,7 +90,7 @@ public class ExpenseReport {
     }
 
     public void printReport(List<Expense> expenses) {
-        ReportVM report = ReportVM.of(expenses);
+        val report = ReportVM.of(expenses);
         reportPrinter.print(report);
     }
 }
